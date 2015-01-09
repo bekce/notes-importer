@@ -1,0 +1,13 @@
+Content-Type: text/html;
+	charset=utf-8
+Content-Transfer-Encoding: 7bit
+Subject: Here is a note!
+From: sebgymn@example.com
+X-Universally-Unique-Identifier: 59774F59-EFFD-4891-AC8D-781544204AB0
+X-Uniform-Type-Identifier: com.apple.mail-note
+Message-Id: <778BD060-D13E-436D-AF73-D26E0A6A0781@example.com>
+Date: Sun, 01 Jan 2012 12:30:00 +0200
+X-Mail-Created-Date: Sun, 01 Jan 2012 12:30:00 +0200
+Mime-Version: 1.0 (iOS/8.1.2 \(12B440\) dataaccessd/1.0)
+
+Here is a note!<br>

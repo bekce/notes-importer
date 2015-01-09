@@ -1,0 +1,13 @@
+Content-Type: text/html;
+	charset=utf-8
+Content-Transfer-Encoding: 7bit
+Subject: $subject
+From: $from
+X-Universally-Unique-Identifier: $uuId
+X-Uniform-Type-Identifier: com.apple.mail-note
+Message-Id: $messageId
+Date: $date
+X-Mail-Created-Date: $date
+Mime-Version: 1.0 (iOS/8.1.2 \(12B440\) dataaccessd/1.0)
+
+$content
