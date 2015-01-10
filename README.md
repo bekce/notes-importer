@@ -10,6 +10,8 @@ I then created a simple utility which reads from an existing directory of plain 
 #### note file format
 A file in source folder represents a note, contents of that file represents contents of the note. 
 
+Default encoding is utf-8. set `note.encoding` property to override. 
+
 #### datemap file
 This file is used to map dates to notes. Each line format: `<date>;<filename>` 
 Example file (with date format: yyyyMMdd-HHmmss) 
@@ -22,11 +24,13 @@ Input date format can be overriden by setting `input.date.format` system propert
 If a particular filename cannot be found in datemap file, last modified date of the file will be 
 regarded as note date. 
 
+Default encoding is utf-8. set `datemap.encoding` property to override. 
+
 #### running
 `mvn compile exec:java -Dexec.args="<sourcefolder> <targetfolder> <datemapfile> <emailaddress>"`
 
-With date format override: 
-`mvn compile exec:java -Dinput.date.format="dd.MM.yyyy HH:mm:ss" -Dexec.args="<sourcefolder> <targetfolder> <datemapfile> <emailaddress>"`
+With overrides: 
+`mvn compile exec:java -Dinput.date.format="dd.MM.yyyy HH:mm:ss" -Dnote.encoding="utf-16" -Ddatemap.encoding="utf-16" -Dexec.args="src/test/resources/input/ src/test/resources/output/ src/test/resources/datemap sebgymn@example.com"`
 
 Enter email address with which you sync your Notes. 
 

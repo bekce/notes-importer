@@ -35,11 +35,15 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 public class Main {
 
 	static String INPUT_DATE_FORMAT;
+	static String NOTE_ENCODING;
+	static String DATEMAP_ENCODING;
 	static Logger logger = Logger.getLogger(Main.class);
 	public static void main(String[] args) {
 		BasicConfigurator.configure();
 		INPUT_DATE_FORMAT = System.getProperty("input.date.format", "yyyyMMdd-HHmmss");
-		
+		NOTE_ENCODING = System.getProperty("note.encoding", "utf-8");
+		DATEMAP_ENCODING = System.getProperty("datemap.encoding", "utf-8");
+				
 		if(args.length != 4){
 			logger.info("Usage: Main <sourcefolder> <targetfolder> <datemapfile> <emailAddress>");
 			return;
@@ -57,14 +61,19 @@ public class Main {
 		String content; 
 		Date date;
 		String subject(){
-			return content != null ? content.substring(0, content.length()>50 ? 50 : content.length()).replaceAll("[\n\t]", "") : null;
+			String sub = content;
+			int idx = sub.indexOf('\n');
+			if(idx>0) sub = sub.substring(0, idx);
+			sub = sub.replaceAll("\\p{Cntrl}", "").replaceAll("�","");
+			return sub.substring(0, sub.length()>50 ? 50 : sub.length());
 		}
 		String content(){
-			return Utils.escapeToHtml(content);
+			String sub = content.replaceAll("(?!\n)(\\p{Cntrl})", "").replaceAll("�","");
+			return Utils.escapeToHtml(sub);
 		}
 		String dateString(){
 			if(date == null) return null;
-			SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
+			SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
 			return sdf.format(date);
 		}
 	}
@@ -72,14 +81,15 @@ public class Main {
 	Main(final String sourcePath, final String targetPath,
 			final String dateMapFilePath, final String emailAddress)
 			throws IOException {
-		Charset charset = Charset.forName("utf-8");
+		Charset datemapCharset = Charset.forName(DATEMAP_ENCODING);
+		Charset noteCharset = Charset.forName(NOTE_ENCODING);
 		final String domain = emailAddress.substring(emailAddress.indexOf('@')+1);
 		final List<Note> notes = new LinkedList<Main.Note>();
 		
 		//read dates
 		final Map<String, Date> fileDates = new HashMap<String, Date>();
 		final SimpleDateFormat sdf = new SimpleDateFormat(INPUT_DATE_FORMAT);
-		List<String> readAllLines = Files.readAllLines(new File(dateMapFilePath).toPath(), charset);
+		List<String> readAllLines = Files.readAllLines(new File(dateMapFilePath).toPath(), datemapCharset);
 		int lineNo = 0;
 		for (String line : readAllLines) {
 			lineNo++;
@@ -99,7 +109,7 @@ public class Main {
 		File sourceDir = new File(sourcePath);
 		for(File source: sourceDir.listFiles()){
 			Note note = new Note();
-			note.content = new String(Files.readAllBytes(source.toPath()));
+			note.content = new String(Files.readAllBytes(source.toPath()), noteCharset);
 			note.date = fileDates.get(source.getName());
 			note.filename = source.getName();
 			if(note.date == null){
